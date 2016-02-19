@@ -10,7 +10,7 @@ _Default view_
 > ![screenshot1](screens/s1.png)
   
 _Settings panel_  
->  ![screenshot2](screens/settings-consoles.png) ![screenshot4](screens/settings-graphics.png) ![screenshot4](screens/settings-other.png)
+>  ![screenshot2](screens/settings-consoles.png) ![screenshot3](screens/settings-graphics.png) ![screenshot4](screens/settings-others.png)
 
 ###User Reviews
 *_triarif_*  
