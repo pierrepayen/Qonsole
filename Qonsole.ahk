@@ -1,4 +1,4 @@
-﻿; Tested On AutoHotkey Version: 1.1.13.01
+; Tested On AutoHotkey Version: 1.1.23.01
 	
 	;///////////////////////// [ XP Patch ] /////////////////////////
 	if A_OSVersion in WIN_2003,WIN_XP,WIN_2000,WIN_NT4,WIN_95,WIN_98,WIN_ME  ; Note: No spaces around commas.
@@ -359,7 +359,7 @@ showC:
 			con=ahk_class mintty
 			if (!FileExist(GitBash_path))
 			{
-				MsgBox, 52, Qonsole Error, GitBash was not found.`nBrowse For GitBash? (git-bash.exe)
+				MsgBox, 52, Qonsole Error, GitBash was not found.`nBrowse For GitBash? (mintty.exe)
 				IfMsgBox, Yes
 				{
 					GitBash_pathS:=BrowseForConsole("GitBash")
