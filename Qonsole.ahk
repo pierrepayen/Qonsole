@@ -64,7 +64,7 @@
 	IniRead,CMD_Path,%configfile%,Settings,CMD_Path,%A_scriptDir%\cmd_Qonsole.lnk ;CMD_Path:="cmd_tcon.lnk" ;%comspec% ;Quotes!!!
 	IniRead,Console_2_path,%configfile%,Settings,Console_2_path,%A_scriptDir%\Console.exe ;Console_2_path:="bin\Console.exe"
 	IniRead,Mintty_path,%configfile%,Settings,Mintty_path,%A_scriptDir%\mintty.exe
-	IniRead,GitBash_path,%configfile%,Settings,GitBash_path,%A_scriptDir%\git-cmd.exe	
+	IniRead,GitBash_path,%configfile%,Settings,GitBash_path,%A_scriptDir%\mintty.exe	
 	IniRead,OpenHotkey,%configfile%,Settings,OpenHotkey,#c
 		Hotkey,%OpenHotkey%,OpenHotkey,On
 	IniRead,CMD_Width,%configfile%,Settings,CMD_Width, % (Default_CMD_Width*8)
