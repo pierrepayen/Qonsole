@@ -720,149 +720,132 @@ prog_settings:
 		CMD_PathS:=CMD_Path
 		Console_2_pathS:=Console_2_path
 		;Gui, +AlwaysOnTop
-		Gui, Add, Button, x12 y20 w100 h20 gshow_settings, Console Settings
-		if (InStr(OpenHotkey,"#"))
-		{
-			WinKey:=1
-			Gui, Add, CheckBox, x12 y40 w80 h20 checked vWinKey, Windows... +
-		}
-		else
-		{
-			WinKey:=0
-			Gui, Add, CheckBox, x12 y40 w80 h20 vWinKey, Windows... +
-		}
-		StringReplace,OpenHotkeyX,OpenHotkey,#,,All
-		
-		;------------------------ Console Settings --------------------------
-		
-		Gui, Add, Hotkey, x102 y40 w60 h20 vOpenHotkey, %OpenHotkeyX%
-		Gui, Add, Edit, xp yp+20 wp hp , ;20
-		
-		;///////////////////////// [ XP Patch ] /////////////////////////
-		if (XPMode)
-			Gui, Add, UpDown, vUTransparencyPercent Disabled, %TransparencyPercent%
-		else
-			Gui, Add, UpDown, vUTransparencyPercent, %TransparencyPercent%
-		;///////////////////////// [ XP Patch ] /////////////////////////
-		
-		Gui, Add, Text, x16 yp+4 w80 h20 , Transparency `%
-		
-		Gui, Add, Text, x172 y24 w70 h16 , Console2 Path
-		Gui, Add, Text, xp+20 y+4 w50 h16 , Cmd Path
-		Gui, Add, Text, xp-6 y+4 h16 , Mintty Path
-		Gui, Add, Button, xp+60 y20 w80 h20 gButtonConsole2, Browse...
-		Gui, Add, Button, xp y+0 wp hp gButtonCMD, Browse...
-		Gui, Add, Button, xp y+0 wp hp gButtonMintty, Browse...
-		
-		Gui, Add, Text, x172 y86 w70 h16 , Console Mode
-		Gui, Add, DropDownList, xp+74 y82 w80 h20 +r3 vDDmode, Cmd|Console2|Mintty
+		Gui, Add, Tab, x2 y-1 w340 h270 , Consoles|Graphics|Others
+		;Tab Consoles
+		;----------- Consoles settings -----------------;
+		Gui, Tab, Consoles
+			Gui, Add, Button, x220 y29 w100 h20 gshow_settings, Consoles settings
+			;----------- HotKey -----------------;
+			if (InStr(OpenHotkey,"#"))
+			{
+				WinKey:=1
+				Gui, Add, CheckBox,x12 y29 w90 h20 checked vWinKey, Windows... +
+			}
+			else
+			{
+				WinKey:=0
+				Gui, Add, CheckBox, x12 y29 w90 h20 vWinKey, Windows... +
+			}
+			StringReplace,OpenHotkeyX,OpenHotkey,#,,All
+			Gui, Add, Hotkey,	x102 y29 w60 h20 vOpenHotkey, %OpenHotkeyX%
+			Gui, Add, Text, x13 y55 w100 h20 , Start Up Arguments
+			Gui, Add, Edit, x114 y54 w218 h22 vCMD_StartUpArgs hwndhEditCMD_StartUpArgs,%CMD_StartUpArgs%
+					;----------- Consoles paths -----------------;
+			Gui, Add, GroupBox, x2 y79 w180 h100 , Paths
+				Gui, Add, Text, x12 y102 w80 h20 , cmd
+				Gui, Add, Button, x92 y99 w80 h20 gButtonCMD, Browse
+				Gui, Add, Text, x12 y122 w80 h20 , Console2
+				Gui, Add, Button, x92 y119 w80 h20 gButtonConsole2, Browse
+				Gui, Add, Text, x12 y142 w80 h19 , Mintty
+				Gui, Add, Button, x92 y139 w80 h20 gButtonMintty, Browse
+			Gui, Add, Text, x192 y122 w80 h19 , Console mode
+			Gui, Add, DropDownList, x272 y119 w60 h30 +r3 vDDmode, cmd|console2|mintty
 
-		UCMD_Width_max:=(A_ScreenWidth+8)
-		Gui, Add, Text, x12 yp+3 hp , Width (approx. in px)
-		Gui, Add, Edit, x+4 yp-3 w55 hp ;, 20
-		Gui, Add, UpDown, vUCMD_Width Range24-%UCMD_Width_max%, %CMD_Width%
+		;----------- Graphics/Animation settings -----------------;
+		Gui, Tab, Graphics
+			;----------- Qonsoles graphics settings -----------------;
+			Gui, Add, GroupBox, x12 y29 w190 h120 , Qonsole settings	
+				Gui, Add, Text, x22 y49 w90 h20 , Transparency `%
+				Gui, Add, Edit, x122 y49 w50 h20 ;, 20
+				;///////////////////////// [ XP Patch ] /////////////////////////
+				if (XPMode)
+					Gui, Add, UpDown, vUTransparencyPercent Disabled, %TransparencyPercent%
+				else
+					Gui, Add, UpDown, vUTransparencyPercent, %TransparencyPercent%
+				;///////////////////////// [ XP Patch ] /////////////////////////
+				UCMD_Width_max:=(A_ScreenWidth+8)
+				Gui, Add, Text, x22 y69 w90 h20 , Width (in px)
+				Gui, Add, Edit, x122 y69 w50 h20 ; 1024
+				Gui, Add, UpDown, vUCMD_Width Range24-%UCMD_Width_max%, %CMD_Width%
+				UCMD_Height_max:=(A_screenHeight+8)
+				Gui, Add, Text, x22 y89 w90 h20 , Height (in px)
+				Gui, Add, Edit, x122 y89 w50 h20 ;, 266
+				Gui, Add, UpDown, vUCMD_Height Range24-%UCMD_Height_max%, %CMD_Height%
+				if(HorizontallyCentered)
+					Gui, Add, CheckBox, x22 y109 w70 h30 checked vHorizontallyCentered, Centered 
+				else
+					Gui, Add, CheckBox, x22 y109 w70 h30 vHorizontallyCentered, Centered
+				if(BottomPlaced)
+					Gui, Add, CheckBox, x122 y109 w70 h30 checked vBottomPlaced, Bottom 
+				else
+					Gui, Add, CheckBox, x122 y109 w70 h30 vBottomPlaced, Bottom
+			;----------- Animation settings -----------------; 
+			Gui, Add, GroupBox, x212 y29 w120 h140 , Animation settings
+				Gui, Add, Text, x217 y49 w60 h20 , Speed
+				Gui, Add, Edit, x277 y49 w40 h20 ;, 1
+				Gui, Add, UpDown, vUspeed Range1-100, %speed%
+				Gui, Add, Text, x217 y79 w60 h20 , Delay
+				Gui, Add, Edit, x277 y79 w40 h20 ;, 20
+				Gui, Add, UpDown, vUdelay Range0-1000, %delay%
+				Gui, Add, Text, x217 y109 w60 h20 , dx
+				Gui, Add, Edit, x277 y109 w40 h20; , 25
+				Gui, Add, UpDown, vUdx Range0-100, %dx%
+				if(AnimationDisabled)
+					Gui, Add, CheckBox, x217 y134 checked vAnimationDisabled, Disable animation
+				else
+					Gui, Add, CheckBox, x217 y134 vAnimationDisabled, Disable animation			
+					;----------- Background settings -----------------;
+			if (!XPMode){
+				Gui, Add, GroupBox, x12 y179 w320 h80 , Background settings
+					Gui, Add, Text, x20 y202 w50 h20 , Color
+					Gui, Add, Edit, x50 y199 w50 h20 vUGuiBGDarken_Color gGUISetting_color +Uppercase, % strupper(RegExReplace(dec2hex(GuiBGDarken_Color),"0x"))
+					GuiBGDarken_Max_pc:=Round((abs(255-GuiBGDarken_Max)/255)*100)
+					Gui, Add, Text, x110 y202 w80 h20 , Transparency `%
+					Gui, Add, Edit, x190 y199 w40 h20 ;, 50
+					Gui, Add, UpDown, vUGuiBGDarken_Max Range0-100, %GuiBGDarken_Max_pc%
+					Gui, Add, Text, x237 y202 w80 h20 , Speed
+					Gui, Add, Edit, x270 y199 w40 h20 ;, 6
+					Gui, Add, UpDown, vUGuiBGDarken_Increment Range1-100, %GuiBGDarken_Increment%
+					Gui, Font, italic underline c666666
+					Gui, Add, Text, x22 y229 w310 h20 +Center + BackgroundTrans, Note: Set the Transparency to '100`%' to disable the background
+					Gui, Font
+			}
 		
-		UCMD_Height_max:=(A_screenHeight+8)
-		Gui, Add, Text, x9 y+5 hp , Height (approx. in px)
-		Gui, Add, Edit, x+4 yp-3 w55 hp ;, 20
-		Gui, Add, UpDown, vUCMD_Height Range24-%UCMD_Height_max%, %CMD_Height%
-		
-		if(HorizontallyCentered)
-			Gui, Add, CheckBox, x+12 yp hp checked vHorizontallyCentered, Centered 
-		else
-			Gui, Add, CheckBox, x+12 yp hp vHorizontallyCentered, Centered
-		if(BottomPlaced)
-			Gui, Add, CheckBox, x+12 yp hp checked vBottomPlaced, Bottom 
-		else
-			Gui, Add, CheckBox, x+12 yp hp vBottomPlaced, Bottom 
+		;----------- Misc settings -----------------;
+		Gui, Tab, Others
+			if(RunOnStartUp)
+					Gui, Add, CheckBox, x12 y29 checked vRunOnStartUp, Run %AppName% on start-up
+			else
+					Gui, Add, CheckBox, x12 y29 vRunOnStartUp, Run %AppName% on start-up
+			if(CmdPaste)
+					Gui, Add, CheckBox, x12 y49 checked vCmdPaste, Enable Console Ctrl+V Pasting
+			else
+					Gui, Add, CheckBox, x12 y49 vCmdPaste, Enable Console Ctrl+V Pasting
+			if(HideOnInActive)
+					Gui, Add, CheckBox, x12 y69 checked vHideOnInActive, Hide when inactive
+			else
+					Gui, Add, CheckBox, x12 y69 vHideOnInActive, Hide when inactive
+			if(ReduceMemory)
+				Gui, Add, CheckBox, x12 y89 checked vReduceMemory, Reduce Memory Usage
+			else
+				Gui, Add, CheckBox, x12 y89 vReduceMemory, Reduce Memory Usage
+			;if(AutoWinActivate)
+				; Gui, Add, CheckBox, x12 y109 Disabled checked vAutoWinActivate, Auto WinActivate
+			;else
+					Gui, Add, CheckBox, x12 y109 Disabled vAutoWinActivate, Auto WinActivate
+			/*
+				if(ShowDebugMenu)
+					Gui, Add, CheckBox, x12 y129 checked vShowDebugMenu, Show Debug Menu
+				else
+					Gui, Add, CheckBox, x12 y129 vShowDebugMenu, Show Debug Menu
+				*/
+		;----------- Save and Cancel -----------------;
+		Gui, Tab
+			Gui, Add, Button, x52 y289 w100 h30 gGuiSave Default, &Save
+			Gui, Add, Button, x192 y289 w100 h30 gGuiClose, &Cancel
+		; Generated using SmartGUI Creator 4.0
+		Gui, Show, h341 w342, %appname% Settings
 
-		Gui, Add, Text, x16 yp+26, Start Up Arguments
-		Gui, Add, Edit, x+4 yp-2 h20 w214 vCMD_StartUpArgs hwndhEditCMD_StartUpArgs,%CMD_StartUpArgs%
-		
-		Gui, Add, GroupBox, x4 y4 w330 h154 , Console Settings
-		
-		;------------ Animation Settings -------------------
-		
-		Gui, Add, GroupBox, x4 y+2 w330 h44 , Animation Settings
-		Gui, Add, Text, xp+12 yp+20 w36 h20 , Speed
-		Gui, Add, Edit, x+0 yp-3 w60 hp ; , 1
-		Gui, Add, UpDown, vUspeed Range1-100, %speed%
-		Gui, Add, Text, xp+76 yp+3 w30 hp, Delay
-		Gui, Add, Edit, x+4 yp-3 w60 hp ;, 20
-		Gui, Add, UpDown, vUdelay Range0-1000, %delay%
-		Gui, Add, Text, xp+74 yp+3 w16 hp , dx
-		Gui, Add, Edit, x+0 yp-3 w60 hp ;, 25
-		Gui, Add, UpDown, vUdx Range0-100, %dx%
-		
-		;------------------- Background ----------------------
-		
-		;///////////////////////// [ XP Patch ] /////////////////////////
-		if (!XPMode) {
-			Gui, Add, GroupBox, x4 y+8 w330 h62 , Background Settings
-			Gui, Add, Text, x16 yp+20 h20 , BG Color
-			Gui, Add, Edit, x+4 yp-3 w52 hp vUGuiBGDarken_Color gGUISetting_color +Uppercase, % strupper(RegExReplace(dec2hex(GuiBGDarken_Color),"0x"))
-			GuiBGDarken_Max_pc:=Round((abs(255-GuiBGDarken_Max)/255)*100)
-			Gui, Add, Text, x+4 yp+3 hp , Transparency `%
-			Gui, Add, Edit, x+4 yp-3 w44 hp ;, 25
-			Gui, Add, UpDown, vUGuiBGDarken_Max Range0-100, %GuiBGDarken_Max_pc%
-			Gui, Add, Text, x+6 yp+3 hp , Speed
-			Gui, Add, Edit, x+4 yp-3 w44 hp ;, 25
-			Gui, Add, UpDown, vUGuiBGDarken_Increment Range1-100, %GuiBGDarken_Increment%
-			
-			Gui, Font, italic underline c666666
-			Gui, Add, Text, x4 y+3 w330 +Center +BackgroundTrans, Note: Set the Transparency to '100`%' to Disable the Background
-			Gui, Font
-		}
-		;///////////////////////// [ XP Patch ] /////////////////////////
-		
-		;----------------------- Misc settings ---------------------------------
-		
-		Gui, Add, GroupBox, x4 y+8 w330 h70 , Other Settings
-		
-		if(RunOnStartUp)
-			Gui, Add, CheckBox, x16 yp+16 checked vRunOnStartUp, Run %AppName% when Windows Starts
-		else
-			Gui, Add, CheckBox, x16 yp+16 vRunOnStartUp, Run %AppName% when Windows Starts
-			
-		/*
-		if(ShowDebugMenu)
-			Gui, Add, CheckBox, x+4 yp checked vShowDebugMenu, Show Debug Menu
-		else
-			Gui, Add, CheckBox, x+4 yp vShowDebugMenu, Show Debug Menu
-		*/
-		
-		if(AnimationDisabled)
-			Gui, Add, CheckBox, x+4 yp checked vAnimationDisabled, Disable Animation
-		else
-			Gui, Add, CheckBox, x+4 yp vAnimationDisabled, Disable Animation
-			
-		if(CmdPaste)
-			Gui, Add, CheckBox, x16 y+4 checked vCmdPaste, Enable Console Ctrl+V Pasting
-		else
-			Gui, Add, CheckBox, x16 y+4 vCmdPaste, Enable Console Ctrl+V Pasting
-		
-		if(HideOnInActive)
-			Gui, Add, CheckBox, x+29 yp hp checked vHideOnInActive, Hide when inactive
-		else
-			Gui, Add, CheckBox, x+29 yp hp vHideOnInActive, Hide when inactive
-			
-		if(ReduceMemory)
-			Gui, Add, CheckBox, x16 y+4 checked vReduceMemory, Reduce Memory Usage
-		else
-			Gui, Add, CheckBox, x16 y+4 vReduceMemory, Reduce Memory Usage
-		
-		;if(AutoWinActivate)
-		;	Gui, Add, CheckBox, x+60 yp Disabled checked vAutoWinActivate, Auto WinActivate
-		;else
-			Gui, Add, CheckBox, x+60 yp Disabled vAutoWinActivate, Auto WinActivate
-		
-		;----------------- Save and Cancel + Show ------------------------------
-		
-		Gui, Add, Button, x62 y+14 w100 h30 gGuiSave Default, &Save
-		Gui, Add, Button, xp+100 yp wp hp gGuiClose, &Cancel
-		; Partially Generated using SmartGUI Creator for SciTE
-		;Gui +LastFound
-		Gui, Show, w338, %appname% Settings
 		Console_Mode:=(Console_Mode)?Console_Mode:"Cmd"
 		GuiControl, ChooseString, DDMode, %Console_Mode%
 		SetEditPlaceholder(hEditCMD_StartUpArgs,"...to be appended when run/launched...")
