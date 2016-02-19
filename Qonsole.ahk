@@ -64,6 +64,7 @@
 	IniRead,CMD_Path,%configfile%,Settings,CMD_Path,%A_scriptDir%\cmd_Qonsole.lnk ;CMD_Path:="cmd_tcon.lnk" ;%comspec% ;Quotes!!!
 	IniRead,Console_2_path,%configfile%,Settings,Console_2_path,%A_scriptDir%\Console.exe ;Console_2_path:="bin\Console.exe"
 	IniRead,Mintty_path,%configfile%,Settings,Mintty_path,%A_scriptDir%\mintty.exe
+	IniRead,GitBash_path,%configfile%,Settings,GitBash_path,%A_scriptDir%\git-cmd.exe	
 	IniRead,OpenHotkey,%configfile%,Settings,OpenHotkey,#c
 		Hotkey,%OpenHotkey%,OpenHotkey,On
 	IniRead,CMD_Width,%configfile%,Settings,CMD_Width, % (Default_CMD_Width*8)
@@ -128,9 +129,9 @@ cShown:=0
 cmd_w_offset:=0
 cPID:=0
 Check4Update_hidden_fail:=1
-GroupAdd,Console_Classes,ahk_class ConsoleWindowClass
+GroupAdd,Console_Classes,ahk_class ConsoleWindowClass  ;for cmd or git-cmd.exe
 GroupAdd,Console_Classes,ahk_class Console_2_Main
-GroupAdd,Console_Classes,ahk_class mintty
+GroupAdd,Console_Classes,ahk_class mintty ;for mintty and git-bash.exe
 
 if (CmdPaste) {
 	Hotkey, IfWinActive, ahk_group Console_Classes
@@ -354,6 +355,52 @@ showC:
 			WinMove,%con%,,,,, % (ch-=14)
 			CMD_Height-=14
 			
+		} else if (InStr(Console_Mode,"GitBash")) {
+			con=ahk_class mintty
+			if (!FileExist(GitBash_path))
+			{
+				MsgBox, 52, Qonsole Error, GitBash was not found.`nBrowse For GitBash? (git-bash.exe)
+				IfMsgBox, Yes
+				{
+					GitBash_pathS:=BrowseForConsole("GitBash")
+					IniWrite,%GitBash_pathS%,%configFile%,Settings,GitBash_path
+					MsgBox, 48, Qonsole Error,The program will now restart.
+					gosub reload
+					
+				}
+				IfMsgBox, No
+				{
+					MsgBox, 48, Qonsole Error, Cmd Mode will be used.`nThe program will now restart.
+					IniWrite,0,%configFile%,Settings,Console_Mode
+					gosub reload
+				}
+			}
+			run,"%GitBash_path%" %CMD_StartUpArgs%,,,cPID
+			WinWait,%con%
+			DetectHiddenWindows,Off
+			WinWaitActive,ahk_pid %cPID%
+			WinWaitActive,%con%
+			DetectHiddenWindows,On
+				Winset, AlwaysOnTop, On, %con%
+			cmd_height__:=(-cmd_height)
+			
+			; hide window border
+			WinSet, Style, -0x40000, %con%
+			WinSet, Style, -0x80000, %con%
+			WinSet, Style, -0x200000, %con%
+			WinSet, Style, -0xC00000, %con%
+			WinSet, Style, -0x800000, %con%
+			WinSet, Style, -0x400000, %con%
+			
+			WinMove,ahk_pid %cPID%,,,%cmd_height__%,%cmd_width%,% cmd_height+0
+			WinMove,%con%,,,%cmd_height__%,%cmd_width%, % cmd_height+0
+			WinGetPos,,,cw_w,ch,%con%
+			WinGet,hc,ID,%con%
+			con=ahk_id %hc%
+			cmd_w_fix:=cw_w
+			WinMove,%con%,,,,, % (ch-=14)
+			CMD_Height-=14
+			
 		} else { ;Cmd mode (Quake mode?? >> Quahke)
 			con=ahk_class ConsoleWindowClass
 			chk_CMD_Path:
@@ -465,9 +512,9 @@ showC:
 		}
 		else
 		{
-			if (InStr(Console_Mode,"Mintty"))
+			if (InStr(Console_Mode,"Mintty"||"GitBash"))
 				WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
-			
+
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			if (BottomPlaced)
 				WinSlideUpExp(Con,Delay,speed,A_ScreenHeight-CMD_Height,dx)
@@ -506,10 +553,11 @@ showC:
 		}
 		else
 		{
-			if (InStr(Console_Mode,"Mintty")) {
+			if (InStr(Console_Mode,"Mintty"||GitBash)) {
 				WinSet, Transparent, % (abs(100-TransparencyPercent)/100)*255 , %con%
 				WinSet, Style, -0x40000, %con%
 			}
+
 			winfade("ahk_id " hGuiBGDarken,GuiBGDarken_Max,GuiBGDarken_Increment) ;fade in
 			;gosub FadeBG
 			
@@ -695,7 +743,7 @@ show_settings:
 		WinWaitActive,Console Settings
 		WinWaitClose,Console Settings
 	}
-	else if (InStr(Console_Mode,"mintty")) {
+	else if (InStr(Console_Mode,"mintty"||"GitBash")) {
 		if (!cShown)
 			gosub, OpenHotkey
 		a_keyD:=A_KeyDelay
@@ -742,16 +790,19 @@ prog_settings:
 			Gui, Add, Text, x5 y57 w100 h20 , Start Up arguments
 			Gui, Add, Edit, xp+95 yp-4 w170 h22 +Center vCMD_StartUpArgs hwndhEditCMD_StartUpArgs,%CMD_StartUpArgs%
 					;----------- Consoles paths -----------------;
-			Gui, Add, GroupBox, x5 y79 w110 h90 , Paths settings
+			Gui, Add, GroupBox, x5 y79 w110 h110 , Paths settings
 				Gui, Add, Text,   xp+5 yp+20 w50 h20 , cmd
 				Gui, Add, Text,   xp yp+20 wp hp , Console2
 				Gui, Add, Text,   xp yp+20 wp hp , Mintty
+				Gui, Add, Text,   xp yp+20 wp hp , Git Bash
 				Gui, Add, Button, xp+50 y97 wp hp gButtonCMD, Browse
 				Gui, Add, Button, xp yp+20 wp hp gButtonConsole2, Browse
 				Gui, Add, Button, xp yp+20 wp hp gButtonMintty, Browse
+				Gui, Add, Button, xp yp+20 wp hp gButtonGitBash, Browse
+
 
 			Gui, Add, Text, x119 y99 w80 h20 , Console mode
-			Gui, Add, DropDownList, xp+75 yp-3 w60 hp +r3 vDDmode, cmd|console2|mintty
+			Gui, Add, DropDownList, xp+75 yp-3 w60 hp +r4 vDDmode, cmd|console2|mintty|GitBash
 
 		;----------- Graphics/Animation settings -----------------;
 		Gui, Tab, Graphics
@@ -870,7 +921,9 @@ return
 ButtonConsole2:
 Console_2_pathS:=BrowseForConsole("Console2")
 return
-
+ButtonGitBash:
+GitBash_pathS:=BrowseForConsole("GitBash")
+return
 GuiSave:
 	Gui,Submit
 	GuiSave_btn_clicked:=1
@@ -907,6 +960,8 @@ GuiSave:
 		IniWrite,%mintty_pathS%,%configFile%,Settings,Mintty_Path
 	if (FileExist(Console_2_pathS))
 		IniWrite,%Console_2_pathS%,%configFile%,Settings,Console_2_path
+	if (FileExist(GitBash_pathS))
+		IniWrite,%GitBash_pathS%,%configFile%,Settings,GitBash_Path
 	IniWrite,%OpenHotkey%,%configFile%,Settings,OpenHotkey
 	IniWrite,%UCMD_Width%,%configFile%,Settings,CMD_Width
 	IniWrite,%UCMD_Height%,%configFile%,Settings,CMD_Height
