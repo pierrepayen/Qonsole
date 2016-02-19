@@ -399,7 +399,6 @@ showC:
 			con=ahk_id %hc%
 			cmd_w_fix:=cw_w
 			WinMove,%con%,,,,, % (ch-=14)
-			CMD_Height-=14
 			
 		} else { ;Cmd mode (Quake mode?? >> Quahke)
 			con=ahk_class ConsoleWindowClass
